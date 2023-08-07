@@ -1,5 +1,4 @@
 import pandas as pd
-from pandas.api.types import union_categoricals
 
 class TabTokenizer:
 
@@ -7,19 +6,17 @@ class TabTokenizer:
 
         self.itos = {}
         self.stoi = {}
-        self.vocab = {}
+        self.cod2cat = {}
+        self._cats = {}
 
     def fit(self, data: pd.DataFrame):
 
         data = data.select_dtypes(include='category')
+        offsets = data.nunique().cumsum().shift(fill_value=0)
+
         for col in data.columns:
-            self.vocab[col] = list(data[col].cat.categories)
-        
-        i = 0
-        for col in self.vocab:
-            
-        self.stoi = {i:token for i, token in enumerate(all_categories.cat.categories)}
-        self.itos = {token:i for i, token in enumerate(all_categories.cat.categories)}
+            self._cats[col] = data[col].cat.categories
+            self.cod2cat[col] = {code:code + offsets.loc[col] for code in data[col].cat.codes.unique()}
         
     def encode(self, x: pd.DataFrame):
 
