@@ -1,3 +1,4 @@
 from tab_transformer_pytorch.tab_transformer_pytorch import TabTransformer
 from tab_transformer_pytorch.ft_transformer import FTTransformer
 from tab_transformer_pytorch.ts_transfomer import TSTransformer
+from tab_transformer_pytorch.tokenizer import TabTokenizer
