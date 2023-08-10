@@ -143,7 +143,7 @@ class TSTransformer(nn.Module):
         self.num_continuous = num_continuous
 
         if self.num_continuous > 0:
-            self.numerical_embedder = nn.Linear(self.num_continuous, self.num_continuous * dim)
+            self.numerical_embedder = nn.ModuleList([nn.Linear(1, dim, bias=False) for _ in range(self.num_continuous)])
 
         # cls token
         num_dims = (self.num_categories + self.num_continuous) * dim 
@@ -184,9 +184,10 @@ class TSTransformer(nn.Module):
 
         # add numerically embedded tokens
         if self.num_continuous > 0:
-            x_numer = self.numerical_embedder(x_numer)
+            for i, numer_emb in enumerate(self.numerical_embedder):
+                x_numer_i = numer_emb(x_numer[..., i].unsqueeze(dim=-1))
             
-            xs.append(x_numer)
+                xs.append(x_numer_i)
 
         # concat categorical and numerical
 
